@@ -1,0 +1,19 @@
+{
+  "name": "testing-cheatsheet",
+  "version": "1.0.0",
+  "description": "This my learnings from the Udemy Course - [JavaScript Unit Testing](https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/) to use for future reference when writing tests.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest --global"
+  },
+  "keywords": [
+    "vitest",
+    "jest",
+    "javascript"
+  ],
+  "author": "Ria Scholz",
+  "license": "ISC",
+  "devDependencies": {
+    "vitest": "^2.1.4"
+  }
+}
