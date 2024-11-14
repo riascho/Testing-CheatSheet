@@ -127,6 +127,59 @@ it("should summarize all numbers in a given array", () => {
 });
 ```
 
+## Testing for Errors
+
+Basic unit tests only check return values. However, errors are not return values and therefore need to be tested for differently. This could be done using a `try`/`catch` block or wrapping the function to be tested in another function that can then be called by `vitest` or `jest`.
+
+```javascript
+it("should throw error if no input provided", () => {
+  const resultFunction = () => add();
+  expect(resultFunction).toThrowError();
+});
+```
+
+or
+
+```javascript
+it("should throw error if no input provided", () => {
+  try {
+    add();
+  } catch (error) {
+    expect(error).toBeInstanceOf(Error);
+  }
+});
+```
+
+### Testing for specific Errors
+
+The `expect` assertion can check the error message for a specific string, class instance of an error type or even a regex expression.
+
+```typescript
+toThrowError(expected?: string | Constructable | RegExp | Error): void
+```
+
+For example, if we want to check that an error is thrown that contains a specific wording:
+
+```javascript
+expect(resultFunction).toThrowError(/is not iterable/);
+```
+
+## Testing for Opposites
+
+Using the `not` keyword will negate an assertion. For example, this code asserts that an input value is not equal to 2. If it's equal, the assertion will throw an error, and the test will fail.
+
+```javascript
+it("should not return 2 when calculating the square root of 16", () => {
+  const input = Math.sqrt(16);
+  expect(input).not.toBe(2);
+});
+
+it("should not throw error if no input provided", () => {
+  const resultFunction = () => add();
+  expect(resultFunction).not.toThrowError();
+});
+```
+
 # Resources
 
 - https://vitest.dev/api/expect.html

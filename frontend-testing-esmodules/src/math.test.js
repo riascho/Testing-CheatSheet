@@ -1,7 +1,7 @@
 import { it, expect } from "vitest";
 import { add } from "./math";
 
-it("should summarize all numbers in a given array", () => {
+it("should summarize all numbers from array input", () => {
   // Arrange
   const numbers = [1, 2, 3, 4, 5];
   const expectedResult = numbers.reduce((prev, curr) => {
@@ -13,7 +13,7 @@ it("should summarize all numbers in a given array", () => {
   expect(result).toBe(expectedResult);
 });
 
-it("should yield NaN if at least one invalid number is provided", () => {
+it("should yield NaN if input contains at least one invalid number", () => {
   const invalidNumbers1 = [1, 2, 3, "four"];
   const invalidNumbers2 = ["one", 1, 2, 3];
   const result1 = add(invalidNumbers1);
@@ -29,4 +29,31 @@ it("should yield correct sum if input is numeric string values", () => {
   });
   const result = add(stringNumbers);
   expect(result).toBe(expectedResult);
+});
+
+it("should yield 0 if input is empty array", () => {
+  const emptyInputArray = [];
+  const result = add(emptyInputArray);
+  expect(result).toBe(0);
+});
+
+it("should throw error if no input provided", () => {
+  const resultFunction = () => add();
+  expect(resultFunction).toThrowError(TypeError);
+});
+
+// alternative
+// it("should throw error if no input provided", () => {
+//   try {
+//     add();
+//   } catch (error) {
+//     expect(error).toBeInstanceOf(Error);
+//   }
+// });
+
+it("should throw error if multiple arguments are passed instead of single array", () => {
+  const arg1 = 2;
+  const arg2 = 3;
+  const resultFunction = () => add(arg1, arg2);
+  expect(resultFunction).toThrowError(/is not iterable/);
 });
