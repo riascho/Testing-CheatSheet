@@ -79,6 +79,7 @@ Uses `node.js` with **ES modules** with `import` / `export` syntax and with `  "
   Also import the unit function that we want to test.
 
 - **Calling** the `it` or `test` function. **First parameter** is a string that defines what is being tested and what the expectations are in a short and concise manner. **Second parameter** is a callback function that executes the unit function. It also calls the `expect` function with the result from the unit function execution. This is chained with a method that describes what the expected outcome should be (success criteria).
+  > **expect()** does not return true or false. Instead, it throws an error, if the exception is not met. The test runner treats thrown errors as failed tests and tests that do not throw as passed.
 
 ```javascript
 it("should summarize all numbers in a given array", () => {
@@ -177,6 +178,73 @@ it("should not return 2 when calculating the square root of 16", () => {
 it("should not throw error if no input provided", () => {
   const resultFunction = () => add();
   expect(resultFunction).not.toThrowError();
+});
+```
+
+## Testing with Multiple Assertions
+
+When it makes sense to group multiple assertions that have the same expectation they can be included in the same test.
+
+```javascript
+it("should throw 'Invalid number input' error if input is NaN or invalid number", () => {
+  const invalidString = "two";
+  const NaNInput = NaN;
+  const isInvalidString = () => validateNumber(invalidString);
+  const isAlreadyNaN = () => validateNumber(NaNInput);
+  const assertions = [isInvalidString, isAlreadyNaN];
+  assertions.forEach((assertion) => {
+    expect(assertion).toThrowError(/Invalid number input/);
+  });
+});
+```
+
+## Test Suites
+
+Test Suites help to organize tests in a way that the tested units and their assertions can be more easily identified. For this purpose the keyword `describe` can be used (the `describe` function has to be imported). It's a function with the **1st parameter** of a string describing the unit it is testing. Usually it is just the name of the function. The **2nd parameter** is a callback function that calls all `it()` assertions.
+
+```javascript
+import { it, expect, describe } from "vitest";
+import { transformToNumber } from "./numbers";
+
+describe("transformToNumber()", () => {
+  it("should return numeric number from given numeric string input", () => {
+    // test logic //
+  });
+
+  it("should return NaN if no input arguments provided", () => {
+    // test logic //
+  });
+
+  it("should return NaN if invalid input provided", () => {
+    // test logic //
+  });
+
+  it("should return 0 if input is not string", () => {
+    // test logic //
+  });
+});
+```
+
+will log this:
+
+```bash
+ √ src/util/numbers.test.js (4)
+   √ transformToNumber() (4)
+     √ should return numeric number from given numeric string input
+     √ should return NaN if no input arguments provided
+     √ should return NaN if invalid input provided
+     √ should return 0 if input is not string
+```
+
+`describe()` can be nested even further for a more granular approach (further level of indentation)
+
+```javascript
+describe("transformToNumber()", () => {
+  describe("happyPath", () => {
+    it("should return numeric number from given numeric string input", () => {
+      // test logic //
+    });
+  });
 });
 ```
 
