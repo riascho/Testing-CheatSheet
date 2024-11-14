@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --run --reporter verbose",
+    "test:watch": "vitest",
     "start": "nodemon app.js"
   },
   "keywords": [],

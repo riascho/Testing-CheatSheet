@@ -26,7 +26,7 @@ describe("add()", () => {
   it("should return correct sum if input array contains only numeric string values", () => {
     const stringNumbers = ["1", "2", "3"];
     const expectedResult = stringNumbers.reduce((acc, curr) => {
-      return Number(acc) + Number(curr);
+      return +acc + +curr;
     });
     const result = add(stringNumbers);
     expect(result).toBe(expectedResult);

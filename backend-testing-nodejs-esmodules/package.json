@@ -5,7 +5,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest --run --reporter verbose",
+    "test:watch": "vitest",
     "start": "nodemon app.js"
   },
   "keywords": [],
