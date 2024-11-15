@@ -246,6 +246,20 @@ describe("transformToNumber()", () => {
 });
 ```
 
+## Writing Good Tests
+
+- **Don't test what you can't change** - Tests are only required for your own code, no need to test 3rd party code like libraries, builtin browser APIs, native nodejs packages, etc.
+
+- **Separate Frontend from Backend Tests** - Testing core functionalities of backend and frontend separately but do test the client-side reaction to different responses and errors (e.g. expected response data, missing response data, potential errors received from the response)
+
+- **Single Responsibility** - Each test should only test one thing or one behaviour / expected result. Because you want to be able to isolate the responsible assertion in case of test failure. For example, when testing a feature, one test could be on validating input and another on transforming the input. But then even validating the input could be broken down further, for example validating an empty input or a specific amount of input characters etc.
+
+- **Focus on the essence of what you're testing** - Keep tests simple and focused on the tested behaviour and avoid excessive test setups.
+
+- **Keep number of assertions low** - Fewer assertions make the test easier to read and maintain as well as it helps in isolation the cause of a test failure.
+
+- **Write code that's testable** - Sometimes that means to split out complex functions into smaller functions that get called. This helps to isolate behaviours and pin-point which functions cause test failures.
+
 # Resources
 
 - https://vitest.dev/api/expect.html
