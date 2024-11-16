@@ -260,6 +260,48 @@ describe("transformToNumber()", () => {
 
 - **Write code that's testable** - Sometimes that means to split out complex functions into smaller functions that get called. This helps to isolate behaviours and pin-point which functions cause test failures.
 
+## Test Coverage
+
+Vitest supports native code coverage via `v8` and instrumented code coverage via `istanbul`.
+
+- Modify `package.json` to include coverage command:
+
+```json
+{
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  }
+}
+```
+
+- This will install `v8`
+
+```json
+  "devDependencies": {
+    "c8": "^10.1.2" }
+```
+
+- Run `npm run coverage` to get vitest test coverage result
+
+```bash
+----------------|---------|----------|---------|---------|-------------------
+File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+----------------|---------|----------|---------|---------|-------------------
+All files       |   66.66 |      100 |    62.5 |   66.66 |
+ src            |    64.7 |      100 |      50 |    64.7 |
+  math.js       |      55 |      100 |      50 |      55 | 12-20
+  output.js     |   78.57 |      100 |      50 |   78.57 | 12-14
+ src/util       |   68.96 |      100 |      75 |   68.96 |
+  numbers.js    |   43.75 |      100 |      50 |   43.75 | 8-16
+  validation.js |     100 |      100 |     100 |     100 |
+----------------|---------|----------|---------|---------|-------------------
+```
+
 # Resources
 
 - https://vitest.dev/api/expect.html
+
+```
+
+```
