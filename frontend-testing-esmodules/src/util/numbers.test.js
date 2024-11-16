@@ -1,5 +1,5 @@
 import { it, expect, describe } from "vitest";
-import { transformToNumber } from "./numbers";
+import { sanitizeNumbers, transformToNumber } from "./numbers";
 
 describe("transformToNumber()", () => {
   it("should return numeric number from given numeric string input", () => {
@@ -28,5 +28,22 @@ describe("transformToNumber()", () => {
     expect(result1).toBe(expectedResult);
     const result2 = transformToNumber(input2);
     expect(result2).toBe(expectedResult);
+  });
+});
+
+describe("sanitizeNumbers()", () => {
+  it("should return numbers array from numeric strings array", () => {
+    const input = ["1", "2"];
+    const expectedResult = input.map((stringNumber) => Number(stringNumber));
+    const result = sanitizeNumbers(input);
+    expect(result).toEqual(expectedResult);
+  });
+  it("should throw error if input array contains at least one empty string", () => {
+    const invalidInput1 = ["1", ""];
+    const invalidInput2 = [""];
+    const resultFunction1 = () => sanitizeNumbers(invalidInput1);
+    expect(resultFunction1).toThrowError();
+    const resultFunction2 = () => sanitizeNumbers(invalidInput2);
+    expect(resultFunction2).toThrowError();
   });
 });

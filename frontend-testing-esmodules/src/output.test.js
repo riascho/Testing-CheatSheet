@@ -1,7 +1,7 @@
 import { it, expect, describe } from "vitest";
 import { generateOutput } from "./output";
 
-describe("generateOutput(calculationResult)", () => {
+describe("generateOutput()", () => {
   it("should always return a string", () => {
     // Arrange
     const numberInput = 1;
@@ -39,6 +39,6 @@ describe("generateOutput(calculationResult)", () => {
   });
 });
 
-describe("renderOutput(content)", () => {
+describe("renderOutput()", () => {
   it("to be tested", () => {});
 });

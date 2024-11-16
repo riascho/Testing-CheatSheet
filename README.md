@@ -8,7 +8,7 @@ Here are my learnings from the Udemy Course - [JavaScript Unit Testing](https://
 
 Unit testing involves testing individual components or functions of an application in isolation to ensure they work as expected. These tests are typically written by developers and focus on the smallest parts of the application.
 
-### Integration Testing
+### [Integration Testing](#integration-tests)
 
 Integration testing checks how different modules or services in an application work together. It ensures that the interactions between integrated units function correctly and that data flows between them as expected.
 
@@ -298,10 +298,24 @@ All files       |   66.66 |      100 |    62.5 |   66.66 |
 ----------------|---------|----------|---------|---------|-------------------
 ```
 
+# Integration Tests
+
+Integration tests are a type of testing that assess the interactions between different components or systems within an application to ensure they work together as expected.
+Used for functions that call other functions (either builtin or custom functions or 3rd party packages). This implicitly tests the combination and interdependency of the unit and these functions.
+
+## Use Cases
+
+- **After Unit Testing:** Once individual components (units) have been tested, integration tests are employed to verify that these components integrate properly.
+
+- **End-to-End Workflows:** They are used to test complete workflows that involve multiple parts of the system, ensuring that data flows as intended across modules.
+
+- **Database Interactions:** Integration tests are crucial when checking how the application handles interactions with databases or external services.
+
+- **API Testing:** They can also be useful when testing APIs to ensure that different services interact correctly when data is sent and received.
+
+- **Identifying Broken Interfaces:** Integration tests help in detecting problems arising from mismatched interfaces between integrated components.
+
 # Resources
 
 - https://vitest.dev/api/expect.html
-
-```
-
-```
+- https://vitest.dev/guide/features.html#coverage
