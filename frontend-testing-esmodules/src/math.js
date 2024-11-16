@@ -1,8 +1,20 @@
-export function add(numbers) {
+import { sanitizeNumbers } from "./util/numbers.js";
+
+export function add(numberInputs) {
   let sum = 0;
-  // throw new Error("Something went wrong!");
-  for (const number of numbers) {
-    sum += Number(number);
+  for (const item of numberInputs) {
+    sum += Number(item);
   }
   return sum;
+}
+
+export function calculate(numberInputs) {
+  let result = "";
+  try {
+    const cleanNumbers = sanitizeNumbers(numberInputs);
+    result = add(cleanNumbers).toString();
+  } catch (error) {
+    result = error.message;
+  }
+  return result;
 }
