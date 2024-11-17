@@ -405,6 +405,62 @@ The common test hooks in both `vitest` and `jest` are:
 - **Mocking:** - To mock certain resources or APIs before each test and clear them afterward.
 - **Resource Cleanup:** - To ensure temporary data or connections don’t persist beyond the test suite.
 
+## Concurrent Testing
+
+By standard, tests are run in synchronous order after one another. Concurrent testing involves running multiple tests simultaneously to speed up the testing process and ensure that the application can handle multiple operations at the same time. This is particularly useful for large test suites or applications that need to handle high levels of concurrency in production.
+
+### Implementation
+
+In `vitest`/`jest`, concurrent testing can be achieved using the `it.concurrent`(or `test.concurrent`) method. This annotation allows tests to run in parallel, reducing the overall time required to execute the test suite.
+
+```javascript
+import { it, expect } from "vitest";
+
+it.concurrent("test 1", async () => {
+  const result = await someAsyncFunction();
+  expect(result).toBeDefined();
+});
+
+it.concurrent("test 2", async () => {
+  const result = await anotherAsyncFunction();
+  expect(result).toBeDefined();
+});
+```
+
+In addition to running individual tests concurrently, you can also run entire test suites concurrently using the `describe.concurrent` annotation. This allows multiple test suites to execute in parallel, further speeding up the testing process.
+
+```javascript
+import { describe, it, expect } from "vitest";
+
+describe.concurrent("Suite 1", () => {
+  it("test 1", async () => {
+    const result = await someAsyncFunction();
+    expect(result).toBeDefined();
+  });
+
+  it("test 2", async () => {
+    const result = await anotherAsyncFunction();
+    expect(result).toBeDefined();
+  });
+});
+
+describe.concurrent("Suite 2", () => {
+  it("test 3", async () => {
+    const result = await yetAnotherAsyncFunction();
+    expect(result).toBeDefined();
+  });
+
+  it("test 4", async () => {
+    const result = await differentAsyncFunction();
+    expect(result).toBeDefined();
+  });
+});
+```
+
+Even when not adding the `.concurrent` annotation, tests that are stored in different files are executed in parallel. This is done by both `vitest` and `jest` - ensuring that tests are run in a short amount of time.
+
+> A downside of concurrent execution is, that tests that perform clashing (global) state manipulations may interfere with each other.
+
 # Resources
 
 - https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/

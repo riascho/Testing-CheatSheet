@@ -13,7 +13,7 @@ import { User } from "./hooks";
 // global user object but different instantiations on suite level
 let user;
 
-describe("class User with test email", () => {
+describe.concurrent("class User with test email", () => {
   const testEmail = "test@test.com";
   // using hooks
   beforeAll(() => {
@@ -37,7 +37,7 @@ describe("class User with test email", () => {
   });
 });
 
-describe("class User with prod email", () => {
+describe.concurrent("class User with prod email", () => {
   const prodEmail = "John@gmail.com";
   beforeAll(() => {
     user = new User(prodEmail);
