@@ -23,7 +23,7 @@ Here are my learnings from the Udemy Course - [JavaScript Unit Testing](https://
 
 ### Unit Testing
 
-Unit testing involves testing individual components or functions of an application in isolation to ensure they work as expected. These tests are typically written by developers and focus on the smallest parts of the application.
+Unit testing involves testing individual components or functions (or classes) of an application in isolation to ensure they work as expected. These tests are typically written by developers and focus on the smallest parts of the application.
 
 ### [Integration Testing](#integration-tests)
 
@@ -112,7 +112,7 @@ The **AAA (Arrange, Act, Assert)** principle is a widely used pattern in unit te
 ### 1. Arrange
 
 - **Definition:** The setup phase where you prepare all necessary conditions and inputs for the test.
-- **Explanation:** In this step, you initialize any objects, set up dependencies, and define the inputs that the test will use. This preparation helps isolate the functionality being tested, ensuring that any external dependencies or state will not affect the outcome.
+- **Explanation:** In this step, you initialize any variables or class objects, set up dependencies, and define the inputs that the test will use. This preparation helps isolate the functionality being tested, ensuring that any external dependencies or state will not affect the outcome.
 - **Example:** Creating a new instance of a class or setting specific variable values.
 
 ### 2. Act
@@ -336,11 +336,11 @@ Used for functions that call other functions (either builtin or custom functions
 
 ## [Testing Asynchronous Code](./async-testing/)
 
-`vitest` or `jest` by default do not run tests asynchronously. So the asynchronicity has to be built into the tests themselves.
+`vitest`/`jest` by default do not run tests asynchronously. So the asynchronicity has to be built into the tests themselves.
 
 ### Callback Testing
 
-This can be achieved by using the `done` callback to signal that the test is complete. Call `done()` when the async operation finishes. This will make `vitest` and `jest` wait and execute everything until this `done()` is called and therefore change what the assertion will yield as a result.
+This can be achieved by using the `done` callback to signal that the test is complete. Call `done()` when the async operation finishes. This will make the test runner wait and execute everything until this `done()` is called and therefore change what the assertion will yield as a result.
 
 ```javascript
 it("should return a token value", (done) => {
@@ -361,7 +361,7 @@ it("should return a token value", (done) => {
 
 ### Promise Testing
 
-In `vitest` and `jest` the keyword `expect()` supports promises out of the box. Instead of using any `to()` function chains directly, it uses the keywords `.resolves` and `.rejects` in front of the `to()` function in order to evaluate the actual resolution value that is returned from the promise. It is important to `return` this promise assertion, so that `vitest`/`jest` will wait for the promise to be resolved.
+In `vitest`/`jest` the keyword `expect()` supports promises out of the box. Instead of using any `.to()` function chains directly, it uses the keywords `.resolves` and `.rejects` in front of the `.to()` function in order to evaluate the actual resolution value that is returned from the promise. It is important to `return` this promise assertion, so that the test runner will wait for the promise to be resolved.
 
 ```javascript
 it("should return a token value", () => {
@@ -375,7 +375,7 @@ it("should return a token value", () => {
 
 ### Async/Await Testing
 
-When writing tests using the `async`/`await` keywords in `vitest` or `jest`, it's important to understand that `async` functions return a promise. This promise can then be assigned to a variable and can then be evaluated the same as in synchronous assertions.
+When writing tests using the `async`/`await` keywords in `vitest`/`jest`, it's important to understand that `async` functions return a promise. This promise can then be assigned to a variable and can then be evaluated the same as in synchronous assertions.
 
 ```javascript
 it("should return a token value", async () => {
@@ -388,7 +388,26 @@ it("should return a token value", async () => {
 
 > You don't need to return anything when using `async`/`await` (since a function annotated with `async` returns a promise implicitly).
 
+## [Test Hooks](./hooks/)
+
+Test Hooks are special functions provided by `vitest`/`jest`, that are executed automatically by the test runner at a certain point of time. They help in setting up preconditions, initializing resources, cleaning up after tests, and ensuring consistent test behavior. Hooks can be applied on the `describe()` (suite) level or globally.
+
+The common test hooks in both `vitest` and `jest` are:
+
+- `beforeEach` - Runs before each test in a test suite. Ideal for resetting or initializing conditions before every test, ensuring each test starts from a known state.
+- `beforeAll` - Runs once before all the tests in a test suite. Useful for setting up a shared resource (e.g., database connection) that is used by all tests in the suite.
+- `afterEach` - Runs after each test in a test suite. Commonly used to clean up or reset anything that may have been altered during the test, like clearing mocks or resetting data.
+- `afterAll` - Runs once after all tests in a test suite. Great for tearing down global resources or connections that were established in beforeAll.
+
+### When to Use Test Hooks
+
+- **Data Initialization:** - When you need specific data or configurations before running tests.
+- **Mocking:** - To mock certain resources or APIs before each test and clear them afterward.
+- **Resource Cleanup:** - To ensure temporary data or connections don’t persist beyond the test suite.
+
 # Resources
+
+- https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/
 
 - https://vitest.dev/api/expect.html
 - https://vitest.dev/guide/features.html#coverage
