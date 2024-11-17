@@ -2,6 +2,23 @@
 
 Here are my learnings from the Udemy Course - [JavaScript Unit Testing](https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/) - to use for future reference when writing tests, especially with `vitest` and `jest`.
 
+## Table of Contents
+
+1. [Types of Testing](#types-of-testing)
+2. [Testing Setup](#testing-setup)
+3. [Examples](#examples)
+4. [Testing Basics](#testing-basics)
+5. [AAA Principle](#aaa-principle)
+6. [Testing for Errors](#testing-for-errors)
+7. [Testing for Opposites](#testing-for-opposites)
+8. [Testing with Multiple Assertions](#testing-with-multiple-assertions)
+9. [Test Suites](#test-suites)
+10. [Writing Good Tests](#writing-good-tests)
+11. [Test Coverage](#test-coverage)
+12. [Integration Tests](#integration-tests-1)
+13. [Advanced Testing Concepts](#advanced-testing-concepts)
+14. [Resources](#resources)
+
 ## Types of Testing
 
 ### Unit Testing
@@ -298,12 +315,12 @@ All files       |   66.66 |      100 |    62.5 |   66.66 |
 ----------------|---------|----------|---------|---------|-------------------
 ```
 
-# Integration Tests
+## Integration Tests
 
 Integration tests are a type of testing that assess the interactions between different components or systems within an application to ensure they work together as expected.
 Used for functions that call other functions (either builtin or custom functions or 3rd party packages). This implicitly tests the combination and interdependency of the unit and these functions.
 
-## Use Cases
+### Use Cases
 
 - **After Unit Testing:** Once individual components (units) have been tested, integration tests are employed to verify that these components integrate properly.
 
@@ -314,6 +331,62 @@ Used for functions that call other functions (either builtin or custom functions
 - **API Testing:** They can also be useful when testing APIs to ensure that different services interact correctly when data is sent and received.
 
 - **Identifying Broken Interfaces:** Integration tests help in detecting problems arising from mismatched interfaces between integrated components.
+
+# Advanced Testing Concepts
+
+## [Testing Asynchronous Code](./async-testing/)
+
+`vitest` or `jest` by default do not run tests asynchronously. So the asynchronicity has to be built into the tests themselves.
+
+### Callback Testing
+
+This can be achieved by using the `done` callback to signal that the test is complete. Call `done()` when the async operation finishes. This will make `vitest` and `jest` wait and execute everything until this `done()` is called and therefore change what the assertion will yield as a result.
+
+```javascript
+it("should return a token value", (done) => {
+  const testEmail = "test@test.com";
+  generateToken(testEmail, (err, token) => {
+    try {
+      expect(token).toBeDefined(); // will pass
+      expect(token).toBe("eyJhbGciOiJIUzI1"); // will fail
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+});
+```
+
+> `done()` does not pick up any errors but only return values. Therefore if there are any errors it's safer to wrap them in a `try`/`catch` block and return the error to `done(err)`
+
+### Promise Testing
+
+In `vitest` and `jest` the keyword `expect()` supports promises out of the box. Instead of using any `to()` function chains directly, it uses the keywords `.resolves` and `.rejects` in front of the `to()` function in order to evaluate the actual resolution value that is returned from the promise. It is important to `return` this promise assertion, so that `vitest`/`jest` will wait for the promise to be resolved.
+
+```javascript
+it("should return a token value", () => {
+  const testEmail = "test@test.com";
+  return expect(generateTokenPromise(testEmail)).resolves.toBeDefined(); // will pass
+  return expect(generateTokenPromise(testEmail)).resolves.toBe(
+    "eyJhbGciOiJIUzI1"
+  ); // will fail
+});
+```
+
+### Async/Await Testing
+
+When writing tests using the `async`/`await` keywords in `vitest` or `jest`, it's important to understand that `async` functions return a promise. This promise can then be assigned to a variable and can then be evaluated the same as in synchronous assertions.
+
+```javascript
+it("should return a token value", async () => {
+  const testEmail = "test@test.com";
+  const token = await generateTokenAsyncAwait(testEmail);
+  expect(token).toBeDefined(); // will pass
+  expect(token).toBe("eyJhbGciOiJIUzI1"); // will fail
+});
+```
+
+> You don't need to return anything when using `async`/`await` (since a function annotated with `async` returns a promise implicitly).
 
 # Resources
 
