@@ -467,3 +467,4 @@ Even when not adding the `.concurrent` annotation, tests that are stored in diff
 
 - https://vitest.dev/api/expect.html
 - https://vitest.dev/guide/features.html#coverage
+- https://vitest.dev/guide/features.html#running-tests-concurrently
