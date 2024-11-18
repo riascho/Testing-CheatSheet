@@ -461,6 +461,73 @@ Even when not adding the `.concurrent` annotation, tests that are stored in diff
 
 > A downside of concurrent execution is, that tests that perform clashing (global) state manipulations may interfere with each other.
 
+## [Mocking & Spies](./mocking/)
+
+### Side Effects of Testing:
+
+- **External Dependencies**: Tests that interact with external systems (e.g., databases, APIs) can cause unintended changes or incur costs.
+
+- **State Changes**: Tests can alter the state of the system or environment, leading to potential interference with other tests.
+
+- **Resource Consumption**: Tests may consume resources such as memory, CPU, or network bandwidth, which can affect the performance of the system.
+
+### [Spies](./mocking/src/data.test.js)
+
+Spies are a type of test double that records how it is used, such as which methods were called and with what arguments. Spies are “wrappers” around functions or empty replacements for functions that allow you to track if & how a function was called. This is for when wanting to test if the functions are called and not so much about what the function actually does.
+Spies are useful for verifying interactions between objects without affecting the actual behavior of the system.
+
+This is an example of testing a function and whether it calls the function provided in its arguments. It uses the `vi` object to set up a spy function (`.fn()`) that is used to track any execution calls and arguments provided to it.
+
+```javascript
+// production code to be tested
+function generateReportData(logFn) {
+  const data = "Some dummy data for this demo app";
+  if (logFn) {
+    logFn(data);
+  }
+  // test will fail if the logFn function wasn't called here
+  return data;
+}
+
+// test
+it("should call function if one was provided in argument", () => {
+  const logger = vi.fn();
+  generateReportData(logger);
+  expect(logger).toBeCalled();
+});
+```
+
+### [Mocking](./mocking/src/util/io.test.js)
+
+Mocking is the practice of creating objects that simulate the behavior of real objects. Mocks are used to isolate the unit of work being tested and to ensure that tests are not dependent on external systems or states. Mocks act as a replacement for an API that may provide some test-specific behavior instead, i.e. changes the behavior of the function to test but in a way that it aids the test of the unit to be tested in general.
+
+In `vitest` the `vi` object (or the `jest` object in `jest`) can be used to set up a mock function (`.mock()`) that will call any built-in or 3rd party functions but will. It takes one string argument, that is the name of the module to be mocked. What `vitest` does under the hood is to find this 3rd party module and replaces all functions it has with empty spy functions. For all further tests, the 3rd party API can now be used as it would in production but without the tests interfering with the actual production environment.
+
+```javascript
+// production code to be tested
+function writeData(data, filename) {
+  const storagePath = path.join(process.cwd(), "data", filename);
+  return fs.writeFile(storagePath, data);
+}
+
+// test
+import { it, expect, vi } from "vitest";
+import writeData from "./io";
+import { promises as fs } from "fs";
+
+vi.mock("fs"); // mocks the "fs" module with empty spy functions
+
+it("should execute the writeFile() function", () => {
+  const testData = "This is test data";
+  const testFileName = "test.txt";
+  writeData(testData, testFileName); // Act: call production function normally
+  expect(fs.writeFile).toBeCalled(); // Assertion: check if the mocked "fs" function was called by the prod function in test
+});
+```
+
+> In `jest` the `jest.mock()` has to be called at the top of the file before the mocked module is imported. This is not necessary in `vitest` as the `vi.mock()` function is hoisted.
+> Mocking is only done per test file. Has to be repeated in each test file, where modules or APIs need to be mocked.
+
 # Resources
 
 - https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/
@@ -468,3 +535,6 @@ Even when not adding the `.concurrent` annotation, tests that are stored in diff
 - https://vitest.dev/api/expect.html
 - https://vitest.dev/guide/features.html#coverage
 - https://vitest.dev/guide/features.html#running-tests-concurrently
+
+- https://vitest.dev/api/vi.html
+- https://jestjs.io/docs/jest-object
