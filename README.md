@@ -528,6 +528,74 @@ it("should execute the writeFile() function", () => {
 > In `jest` the `jest.mock()` has to be called at the top of the file before the mocked module is imported. This is not necessary in `vitest` as the `vi.mock()` function is hoisted.
 > Mocking is only done per test file. Has to be repeated in each test file, where modules or APIs need to be mocked.
 
+### Custom Mocking Logic
+
+The `vi.fn()` function can be used with some custom function implementation as a callback to mock specific function behavior.
+
+**Example:** This can be useful when testing for the right arguments this function is supposed to be calling.
+
+```javascript
+const mockFunction = vi.fn((a, b) => a + b);
+const result = mockFunction(2, 3);
+expect(mockFunction).toBeCalledWith(2, 3);
+expect(result).toBe(5);
+```
+
+When using `vi.mock()` the function to be mocked can be replaced with custom properties as well.
+
+**Example:** Mocking the `join()` method of the `path` module. Have to wrap it in a `default` object because that's how it's imported. Make it so it simply returns the last argument provided (no matter how many arguments in total are given), because this is what is important for our test.
+
+```javascript
+vi.mock("path", () => {
+  return {
+    default: {
+      join(...args) {
+        return args[args.length - 1];
+      },
+    },
+  };
+});
+```
+
+### [Mocking Globally](./mocking/__mocks__/)
+
+In `vitest`/`jest` the folder `__mocks__` can be used to set up mocks for all tests globally. This folder then contains files of all the modules that you want to mock. In there you can set up the module with the properties that you need specifically for the testing. Use a spy function for that to keep track of executions.
+When using the `mock()` function, the test runner will automatically search for this folder `__mocks__` to find the modules to be mocked. If not found, the module will be replaced with empty properties.
+
+### mockImplementation and mockImplementationOnce
+
+In `jest`/`vitest`, the `mockImplementation` and `mockImplementationOnce` functions are used to overwrite existing mock functions with custom implementations when needed in specific scenarios. This is helps to keep a global mock function but have different implementations of certain components across different tests.
+
+The `mockImplementation()` function allows you to specify a default implementation for a mock function. This implementation will be used every time the mock function is called.
+
+The `mockImplementationOnce()` function allows you to specify an implementation that will be used only once. After the first call, the mock function will revert to its original implementation or the default mock behavior.
+
+> These functions are called on the mock function itself.
+
+**Example:** The `fetchData` function is mocked to return a resolved promise on the first call and a rejected promise on the second call.
+
+```javascript
+import { it, expect, vi } from "vitest";
+import { fetchData } from "./api";
+
+vi.mock("./api");
+
+it("should return data on first call and error on second call", async () => {
+  const mockFetchData = vi.fn();
+  mockFetchData.mockImplementationOnce(() =>
+    Promise.resolve({ data: "first call" })
+  );
+  mockFetchData.mockImplementationOnce(() =>
+    Promise.reject(new Error("second call error"))
+  );
+
+  const firstCall = await mockFetchData();
+  expect(firstCall.data).toBe("first call");
+
+  await expect(mockFetchData()).rejects.toThrow("second call error");
+});
+```
+
 # Resources
 
 - https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/

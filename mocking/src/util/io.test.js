@@ -2,29 +2,31 @@ import { it, describe, expect, vi } from "vitest";
 import writeData from "./io";
 import { promises as fs } from "fs";
 
-vi.mock("fs");
-
-describe("writeData()", () => {
-  it("should execute the writeFile() function", () => {
-    const testData = "This is test data";
-    const testFileName = "test.txt";
-    // writeData() returns a promise and will be resolved if successful (but returns nothing)
-    // return expect(writeData(testData, testFileName)).resolves.toBeUndefined();
-
-    // when using vi.mock("fs") -> it will no longer return a promise
-    // we need to implement test differently: call the function and then see if the mocked module has been called accordingly
-    writeData(testData, testFileName);
-    expect(fs.writeFile).toBeCalled();
-  });
+vi.mock("fs"); // mock "fs" to replace with empty function -> just to check if it's being called
+// mock "path" with replacement to test for specific function executions details
+vi.mock("path", () => {
+  return {
+    default: {
+      join(...args) {
+        return args[args.length - 1];
+      },
+    },
+  };
 });
 
-/**
-
-function to be tested: 
-
-function writeData(data, filename) {
-  const storagePath = path.join(process.cwd(), "data", filename);
-  return fs.writeFile(storagePath, data);
-}
-
- */
+describe("writeData()", () => {
+  // Arrange:
+  const testData = "This is test data";
+  const testFileName = "test.txt";
+  it("should execute the writeFile() function", () => {
+    // Act: call the function
+    writeData(testData, testFileName);
+    // Assert: and then see if the mocked module has been called accordingly (assertions)
+    expect(fs.writeFile).toBeCalled();
+    expect(fs.writeFile).toBeCalledWith(testFileName, testData);
+  });
+  it("should return a promise that resolves to no value if called correctly", () => {
+    // writeData() returns a promise and will be resolved if successful (but returns nothing)
+    return expect(writeData(testData, testFileName)).resolves.toBeUndefined();
+  });
+});
