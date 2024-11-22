@@ -596,6 +596,35 @@ it("should return data on first call and error on second call", async () => {
 });
 ```
 
+### Mocking Global Values & Functions
+
+`fetch` is a globally available function, that is not imported. Therefore `vi.mock()` cannot be used to replace this module. Instead, we can use the `vi.stubGlobal()` method with the first argument being the string name of the globally available module. The 2nd argument is the replacement for this globally available API, e.g. a function to be used instead. This replacement function can be built with `vi.fn()` to include spy functionality.
+
+```javascript
+// mocking our own fetch method for testing
+const testResponseData = { testKey: "testValue" };
+const testFetch = vi.fn((url, payload) => {
+  return new Promise((resolve, reject) => {
+    const dummyResponse = {
+      ok: true,
+      status: 200,
+      data: testResponseData,
+      json() {
+        return new Promise((resolve, reject) => {
+          resolve(testResponseData);
+        });
+      },
+    };
+    resolve(dummyResponse);
+  });
+});
+
+// replacing the global fetch module with our own test implemenation
+vi.stubGlobal("fetch", testFetch);
+```
+
+> You can also mock 3rd parties libraries (e.g. `axios`) with the use of `vi.mock('axios')` and a `__mocks__/axios.js` file
+
 # Resources
 
 - https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/
