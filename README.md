@@ -625,6 +625,61 @@ vi.stubGlobal("fetch", testFetch);
 
 > You can also mock 3rd parties libraries (e.g. `axios`) with the use of `vi.mock('axios')` and a `__mocks__/axios.js` file
 
+# [Testing the DOM (Frontend Testing)](./practice-project/util/dom.test.js)
+
+By default `vitest`/`jest` are running in the `nodejs` environment. Both test runners also offer another test environment called `JSDOM` in which interaction with the DOM can be mocked. This is done via browser emulation in the background. In `vitest`, another option is the `Happy-DOM`. Both are ideal for testing frontend code and projects.
+
+## Setting up the DOM Environment
+
+Activate the environment via flag in the script in `package.json`
+
+```json
+  "scripts": {
+    "test": "vitest --environment JSDOM | happy-dom" }
+```
+
+> In `jest`: by adding a `@jest-environment` docblock at the top of a file, you can specify another environment to be used for all tests in that file only.
+
+```javascript
+/**
+ * @jest-environment jsdom
+ */
+
+test("use jsdom in this test file", () => {
+  const element = document.createElement("div");
+  expect(element).not.toBeNull();
+});
+```
+
+## Setting up the virtual DOM
+
+The virtual DOM / Browser environment emulated by the test runner does not actually have access to our HTML files in the project. We need to set that up as well. For this, we simply load in the HTML file into `nodejs`.
+
+```javascript
+import { describe, it, expect, vi } from "vitest";
+import fs from "fs";
+import path from "path";
+import { Window } from "happy-dom";
+
+const htmlDocPath = path.join(process.cwd(), "index.html");
+const htmlDocContent = fs.readFileSync(htmlDocPath).toString();
+const window = new Window(); // emulated browser window
+const document = window.document;
+document.write(htmlDocContent); // loads our HTML file into virtual DOM
+vi.stubGlobal("document", document); // replaces the real DOM with our virtual DOM
+```
+
+In our following test files we can then do the same DOM interactions like we would in our production code.
+
+```javascript
+it("should add new paragraph to the div element", () => {
+  addParagraph();
+  const divElement = document.getElementById("123");
+  const newParagraph = divElement.firstElementChild;
+  expect(newParagraph).not.toBeNull();
+});
+```
+
 # Resources
 
 - https://www.udemy.com/course/javascript-unit-testing-the-practical-guide/
@@ -635,3 +690,7 @@ vi.stubGlobal("fetch", testFetch);
 
 - https://vitest.dev/api/vi.html
 - https://jestjs.io/docs/jest-object
+
+- https://jestjs.io/docs/configuration#testenvironment-string
+
+- https://testing-library.com/
