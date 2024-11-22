@@ -566,7 +566,7 @@ When using the `mock()` function, the test runner will automatically search for 
 
 In `jest`/`vitest`, the `mockImplementation` and `mockImplementationOnce` functions are used to overwrite existing mock functions with custom implementations when needed in specific scenarios. This is helps to keep a global mock function but have different implementations of certain components across different tests.
 
-The `mockImplementation()` function allows you to specify a default implementation for a mock function. This implementation will be used every time the mock function is called.
+The `mockImplementation()` function allows you to specify a default implementation for a mock function. This implementation will be used for all following tests, every time the mock function is called.
 
 The `mockImplementationOnce()` function allows you to specify an implementation that will be used only once. After the first call, the mock function will revert to its original implementation or the default mock behavior.
 
