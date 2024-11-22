@@ -1,0 +1,23 @@
+{
+  "name": "mocks-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -c-1 -o",
+    "test": "vitest --run --reporter verbose"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "happy-dom": "^2.55.0",
+    "prettier": "^3.3.3",
+    "vitest": "^0.9.3"
+  }
+}
